@@ -8,6 +8,52 @@
   </div>
 </mat-toolbar> -->
 
-<router-outlet></router-outlet>
-<!-- <app-bargraph></app-bargraph> -->
-<!-- <app-piechart></app-piechart> -->
+<!-- <router-outlet></router-outlet> -->
+<!-- <!DOCTYPE html>
+<html>
+<head>
+  <title>Bootstrap Example</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script> -->
+
+<!-- </html> -->
+
+<h1>Current Section : [{{currentSection}}]</h1>
+
+
+<h2>Menu</h2>
+<div (click)="scrollTo('section1')" [ngClass]="{ 'current-section': currentSection === 'section1' }">Section 1 
+</div>
+<div (click)="scrollTo('section2')" [ngClass]="{ 'current-section': currentSection === 'section2' }">Section 2 
+</div>
+<div (click)="scrollTo('section3')" [ngClass]="{ 'current-section': currentSection === 'section3' }">Section 3
+</div>
+<div (click)="scrollTo('section4')" [ngClass]="{ 'current-section': currentSection === 'section4' }">Section 4 
+</div>
+<br/>
+
+
+<div id="parentDiv" scrollSpy [spiedTags]="['DIV']" (sectionChange)="onSectionChange($event)" style="height:150px;overflow-y: scroll;">
+  <div id="section1">
+    <h2 style="margin:0">Section 1</h2>
+    <lorem-ipsum></lorem-ipsum>
+  </div>
+  <div id="section2">
+    <h1>Section 2</h1>
+    <lorem-ipsum></lorem-ipsum>
+  </div>
+  <div id="section3">
+    <h1>Section 3</h1>
+    <lorem-ipsum></lorem-ipsum>
+  </div>
+  <div id="section4">
+    <h1>Section 4</h1>
+    <lorem-ipsum></lorem-ipsum>
+  </div>
+</div>
+<br/>
+
+

@@ -26,6 +26,7 @@ import { SponsordashboardComponent } from './shared/sponsordashboard/sponsordash
 import { SponsorVaultSponsorshipComponent } from "./view/sponsor/sponsor-vault-sponsorship/sponsor-vault-sponsorship.component";
 import { SponsorInvoicesComponent } from "./view/sponsor/sponsor-invoices/sponsor-invoices.component";
 import { SponsorSettingsComponent } from './view/sponsor/sponsor-settings/sponsor-settings.component';
+import { TryComponent } from './try/try.component';
 
 const routes: Routes = [
   //suppliers
@@ -65,6 +66,9 @@ const routes: Routes = [
   },
   {path: "sponsor/account-settings",
   component: SponsorSettingsComponent
+},
+{path: "try",
+component: TryComponent
 },
   
 ];

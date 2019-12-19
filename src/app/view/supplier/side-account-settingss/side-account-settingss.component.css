@@ -6,7 +6,9 @@ mat-form-field{
 .container{
 margin-left: 35%;
 }
-
+.colla{
+    position: fixed;
+}
 mat-card{
     margin: 40px;
     border: 2px black;
