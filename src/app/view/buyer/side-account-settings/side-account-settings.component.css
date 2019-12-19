@@ -1,29 +1,28 @@
-/* mat-form-field{
-    font-size: 14px;
-    width: 90%;
-    
+mat-form-field {
+  font-size: 14px;
+  width: 90%;
 }
-.container{
-    margin: auto;
-}
-
-mat-card{
-    margin: 40px;
-    border: 2px black;
-    background-color:rgb(240, 233, 233);
-}
-#nav{
-    /* margin-top: 10%; */
-    /* position: fixed;
-    margin-right: 0%;
-    background-color: cornsilk;
-    font-size: 120%;
-
+.container {
+  margin-left: 35%;
 }
 
-#personalInfo{
+mat-card {
+  margin: 40px;
+  border: 2px black;
+  background-color: rgb(240, 233, 233);
+}
+#nav {
+  /* margin-top: 10%; */
+  position: fixed;
+  margin-right: 5%;
+  background-color: cornsilk;
+  font-size: 120%;
+  margin-left: 10%;
+}
 
-} */ 
+#personalInfo {
+}
+
 /* app-header {
     position: fixed;
     width: 100%;
@@ -36,14 +35,3 @@ app-buyernav {
 } */
 /* <app-header></app-header>
 <app-buyernav></app-buyernav> */
-
-/* position: fixed;
-
-body {
-    position: relative; 
-}
-#section1 {padding-top:50px;height:500px;color: #fff; background-color: #1E88E5;}
-#section2 {padding-top:50px;height:500px;color: #fff; background-color: #673ab7;}
-#section3 {padding-top:50px;height:500px;color: #fff; background-color: #ff9800;}
-#section41 {padding-top:50px;height:500px;color: #fff; background-color: #00bcd4;}
-#section42 {padding-top:50px;height:500px;color: #fff; background-color: #009688;} */
