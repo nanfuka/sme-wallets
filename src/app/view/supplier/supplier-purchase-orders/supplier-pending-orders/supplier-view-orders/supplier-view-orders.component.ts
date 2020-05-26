@@ -17,6 +17,7 @@ import { Router } from '@angular/router';
 })
 export class SupplierViewOrdersComponent implements OnInit {
   invoiceStatus = false;
+  declinedStatus = false;
   buyerName: string;
   buyerPhone: string;
   buyerEmail: string;
@@ -87,7 +88,7 @@ export class SupplierViewOrdersComponent implements OnInit {
   }
   onKeyPrice(event: any) {
     this.price = event.target.value;
-    this.subTotal = this.price;
+    // this.subTotal = this.price;
     this.totalAfterTax = this.price;
     this.calculateTotalBeforeTaxAndShiping();
     this.calculateTotalAfterTax();
@@ -105,6 +106,7 @@ export class SupplierViewOrdersComponent implements OnInit {
   calculateTotalBeforeTaxAndShiping(): void {
     this.totalBeforeTax =
       this.pasreNumber(this.quantity) * this.pasreNumber(this.price);
+      this.subTotal =   this.totalBeforeTax
   }
   calculateTotalAfterTax(): void {
     // find out if tax = 0
@@ -154,7 +156,7 @@ export class SupplierViewOrdersComponent implements OnInit {
     wallet["timestampStr"] = buyer["emailVerifiedAtStr"];
     return wallet;
   }
-  onSubmit(form: NgForm) {
+  onSubmit(form: NgForm, callback) {
     // get the order
     const order = SupplierPendingOrderData.getSupplierPendingOrderMap().get(
       SupplierPendingOrderData.getIdOfOrderToView()
@@ -188,10 +190,11 @@ export class SupplierViewOrdersComponent implements OnInit {
     );
     supplierOrder.id = 0;
     supplierOrder.order = order;
-    console.log(`the orrrrrrrrder: ${JSON.stringify(order, null, 2)} `);
+    // console.log(`the orrrrrrrrder: ${JSON.stringify(order, null, 2)} `);
     supplierOrder.totalPrice = this.parseStringToNumber(
       this.totalBeforeTax.toString()
     );
+    supplierOrder.order.orderStatus = "accepted"
     supplierOrder.subTotal = this.parseStringToNumber(this.subTotal.toString());
     supplierOrder.finalTotal = this.parseStringToNumber(
       this.totalAfterTax.toString()
@@ -199,7 +202,7 @@ export class SupplierViewOrdersComponent implements OnInit {
     supplierOrder.shippingCharges = this.parseStringToNumber(
       this.shipping.toString()
     );
-    supplierOrder.status = "invoiced"
+    supplierOrder.status = "accepted"
     supplierOrder.taxRate = this.parseStringToNumber(this.tax.toString());
     supplierOrder.pricePerItem = this.parseStringToNumber(
       this.price.toString()
@@ -230,30 +233,85 @@ export class SupplierViewOrdersComponent implements OnInit {
       SupplierPendingOrderData.getIdOfOrderToView()
     );
     let supplierNewOrder = SupplierOrder.createInstance();
+    // supplierNewOrder.order.orderStatus = "accepted";
     let newOrder = Order.createInstance();
-    OldOrder.orderStatus = "invoiced";
+    OldOrder.orderStatus = "accepted";
+    this.objectUtilOrder.objectToInstance(newOrder, OldOrder); 
+    console.log("most needed is", OldOrder)
+
+        this.httpService.postRequest("/supplierOrders/create", supplierOrder).subscribe(e => {
+      console.log(`the supplier Order is ${e.body, null, 2}`)
+      this. invoiceStatus = true;
+      setTimeout(() => {
+        this.callback()
+        }, 4000);
+      })
+    
+
+    this.httpService.putRequest("/orders/update", OldOrder).subscribe(e => {
+      console.log(`the updated Order is ${e.body, null, 2}`)
+      setTimeout(() => {
+        this.updateOrderWebSocketback()
+        }, 3000);
+      
+    });
+  } 
+
+  updateOrderWebSocketback(){
+    this.httpService.getRequest("/orders/findAll").subscribe(e => {
+        console.log("the order websocket has been updated")
+  })
+}
+  
+  callback() {
+    this.httpService.getRequest("/supplierOrders/findAll").subscribe(e => {
+      console.log("this is meant to trigger a websocket")
+    })
+  }
+
+  Decline() {
+    // get the order
+    const order = SupplierPendingOrderData.getSupplierPendingOrderMap().get(
+      SupplierPendingOrderData.getIdOfOrderToView()
+      
+    );
+    console.log("teh retrieved order is", order)
+
+    const timestampStrOrder = "timestampStr";
+    order[timestampStrOrder] = DateUtils.convertDateFormatToParsable(
+      order.timestamp
+    );
+    order.timestamp = null;
+    // create a transient emailVerifiedAtStr
+    const emailVerifiedAtStrBuyer = "emailVerifiedAtStr";
+    const buyer = order.buyer;
+    buyer[emailVerifiedAtStrBuyer] = DateUtils.convertDateFormatToParsable(
+      buyer.emailVerifiedAt
+    );
+    buyer.emailVerifiedAt = null;
+    const supplier = order.supplier;
+    const emailVerifiedAtStrSupplier = "emailVerifiedAtStr";
+    supplier[emailVerifiedAtStrSupplier] = DateUtils.convertDateFormatToParsable(supplier.emailVerifiedAt);
+    supplier.emailVerifiedAt = null;
+    order.wallet = this.temporaryWallet(buyer);
+
+    console.log(`The Order: ${JSON.stringify(order, null, 2)} `);
+   
+    
+    let OldOrder = SupplierPendingOrderData.getSupplierPendingOrderMap().get(
+      SupplierPendingOrderData.getIdOfOrderToView()
+    );
+    // let supplierNewOrder = SupplierOrder.createInstance();
+    let newOrder = Order.createInstance();
+    OldOrder.orderStatus = "declined";
     this.objectUtilOrder.objectToInstance(newOrder, OldOrder); 
     console.log("most needed is", OldOrder)
 
     this.httpService.putRequest("/orders/update", OldOrder).subscribe(e => {
       console.log(`the updated Order is ${e.body, null, 2}`)
+      this.declinedStatus = true;
     });
-
-    this.httpService.postRequest("/supplierOrders/create", supplierOrder).subscribe(e => {
-      console.log(`the supplier Order is ${e.body, null, 2}`)
-      this. invoiceStatus = true;
-    });
-
-      
-      this.invoiceStatus = true;
-      setTimeout(() => {
-        // this.cancel()
-        // this.router.navigate(['/supplier/pendingorder-orders']);
-      }, 2000);
-
-  }
-
-  
+  }  
 }
 
 

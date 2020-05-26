@@ -33,7 +33,7 @@ import { OrdersComponent } from './view/buyer/orders/orders/orders.component';
 import { CreateOrderComponent } from './view/buyer/orders/create-order/create-order.component';
 import { ApproveOrdersComponent } from './view/buyer/orders/approve-orders/approve-orders.component';
 import { PendingOrdersComponent } from './view/buyer/orders/pending-orders/pending-orders.component';
-import { InviteContactsComponent } from './view/buyer/invite-contacts/invite-contacts.component';
+import { InviteContactsComponent } from './view/buyer/invites/invite-contacts/invite-contacts.component';
 // forms
 import { MDBBootstrapModule } from 'angular-bootstrap-md';
 
@@ -75,7 +75,7 @@ import { InViewportModule } from '@thisissoon/angular-inviewport';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 
 import { NgxMaterialTimepickerModule } from 'ngx-material-timepicker';
-import { ViewOrdersComponent } from './view/buyer/orders/view-orders/view-orders.component';
+import { ViewOrdersComponent } from './view/buyer/orders/pending-orders/view-orders/view-orders.component';
 import { SupplierViewOrdersComponent } from './view/supplier/supplier-purchase-orders/supplier-pending-orders/supplier-view-orders/supplier-view-orders.component';
 
 import { ViewInvoicesComponent } from './view/buyer/invoices/view-invoices/view-invoices.component';
@@ -92,6 +92,16 @@ import { ViewApproveInvoicesComponent } from './view/buyer/invoices/aprove-invoi
 import { AproveInvoiceComponent } from './view/buyer/invoices/aprove-invoice/aprove-invoice.component';
 import { ApprovedInvoicesComponent } from './view/buyer/vault/approved-invoices/approved-invoices.component';
 import { VewsApprovedInvoicesComponent } from './view/buyer/vault/approved-invoices/vews-approved-invoices/vews-approved-invoices.component';
+import { GetPaidComponent } from './view/supplier/supplier-vault/supplier-approved-invoices/get-paid/get-paid.component';
+import { ViewSponsorInvoicesComponent } from './view/sponsor/sponsor-invoices/view-sponsor-invoices/view-sponsor-invoices.component';
+import { ViewContactsComponent } from './view/buyer/invites/view-contacts/view-contacts.component';
+import { ViewSuppliersComponent } from './view/buyer/invites/view-suppliers/view-suppliers.component';
+import { WalletsComponent } from './view/wallets/wallets.component';
+import { CreateWalletsComponent } from './view/wallets/create-wallets/create-wallets.component';
+import { WalletsnavComponent } from './shared/walletsnav/walletsnav.component';
+import { WalletHeaderComponent } from './shared/header/wallet-header/wallet-header.component';
+import { ViewWalletsComponent } from './view/wallets/view-wallets/view-wallets.component';
+
 
 @NgModule({
   declarations: [
@@ -158,7 +168,16 @@ import { VewsApprovedInvoicesComponent } from './view/buyer/vault/approved-invoi
     ViewSupplierInvoicedOrdersComponent,
     ViewApproveInvoicesComponent,
     AproveInvoiceComponent,
-    VewsApprovedInvoicesComponent
+    VewsApprovedInvoicesComponent,
+    GetPaidComponent,
+    ViewSponsorInvoicesComponent,
+    ViewContactsComponent,
+    ViewSuppliersComponent,
+    WalletsComponent,
+    CreateWalletsComponent,
+    WalletsnavComponent,
+    WalletHeaderComponent,
+    ViewWalletsComponent
 
     // PiechartComponent
   ],

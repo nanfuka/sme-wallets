@@ -26,12 +26,12 @@ export class PopulateBuyerInvoiceInfoTable {
 
 
   public  static populateTableOnInit(fromResponse: Invoice[]) {
-
+console.log("the response i get")
     return fromResponse.map(e => {
 
       return  {
         invoiceNo: e.id,
-        invoiceDate: e.invoiceDate,
+        invoiceDate: e.theTimestamp,
         invoiceDueDate: e.invoiceDueDate,
         supplierName: e.order.supplier.name,
         invoiceStatus: e.invoiceStatus,

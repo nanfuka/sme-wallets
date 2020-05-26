@@ -11,6 +11,7 @@ import { Router } from "@angular/router";
 import { Invoice } from 'src/app/model/buyer/invoices/invoice-model';
 import { BuyerAllInvoicesInvoiceData } from 'src/app/service/order/buyer.allInvoices.invoice.data';
 import { IBuyerAllInvoices, PopulateBuyerInvoiceInfoTable } from './buyer-all-invoices-interface';
+import { WebsocketService } from 'src/app/utils/websocket/websocket.service';
 
 @Component({
 
@@ -33,18 +34,51 @@ export class AllInvoicesComponent implements OnInit {
   constructor(
     private httpService: HttpService<any>,
     private objectsUtil: ObjectsUtil<Invoice>,
+    private websocketService: WebsocketService,
+
     private populateTable: PopulateTable<Invoice, IBuyerAllInvoices>,
     private router: Router
-  ) {}
+  ) {
+    this.theNotice()
+  }
 
   @ViewChild(MatSort, { static: true }) sort: MatSort;
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
 
 
+  theNotice(): void {
+    this.websocketService.notify("/topic/invoices/findAll", (message)=>{
+      
+      var x = JSON.parse(message.body)
+      var y = JSON.parse(x.body)
+
+
+        const result = this.populateTable.populateTable(
+          this.objectsUtil.dataObjectToArray(y),
+          this.buyerInvoiceInfoTable,
+          this.  buyerInvoiceInfoTableDataSource,
+          PopulateBuyerInvoiceInfoTable.populateTableOnInit
+        );
+        console.log(`the result is ${result}`)
+  
+        this.buyerInvoiceInfoTableDataSource = new MatTableDataSource<
+        IBuyerAllInvoices
+        >(result);
+  
+        this.objectsUtil.dataObjectToArray(y).forEach(e => {
+          BuyerAllInvoicesInvoiceData.addSupplierPendingInvoice(e)
+          BuyerAllInvoicesInvoiceData.addSupplierPendingInvoiceToMap(e, e.id)
+        });
+      });
+  
+      this. buyerInvoiceInfoTableDataSource.sort = this.sort;
+      this. buyerInvoiceInfoTableDataSource.paginator = this.paginator;
+
+  }
+
+
   private populateTheTable(): void {
-  // this.httpService.getRequest("/supplierOrder/findAll").subscribe(response => {
-  //       console.log("the rrrrrrrrr", response.body)
-  // })
+
     this.httpService.getRequest("/invoices/findAll").subscribe(response => {
 
       const result = this.populateTable.populateTable(
@@ -71,38 +105,15 @@ export class AllInvoicesComponent implements OnInit {
 
   ngOnInit() {
     this.populateTheTable();
-    // this.supsoo()
+
   }
-//   supsoo(){
-//         this.httpService.getRequest("/supplierOrder/findAll").subscribe(response => {
-//         console.log("the rrrrrrrrr", response.body)
-//   })
 
   handleViewOrderClick($event): void {
     const id = parseInt($event.target.closest("button").id);
     console.log(`the id is ${id}`)
-    // this. supsoo()
     this.router.navigate(["/buyer/invoices/viewRaisedInvoices"]).then(() => {
      
       BuyerAllInvoicesInvoiceData.setIdOfInvoiceToView(id);
-
-
-    // this.httpService.getRequest("/supplierOrder/findAll").subscribe(response => {
-    //   // this.objectsUtil.dataObjectToArray(response.body).map(theOder => {
-    //     console.log("the invoiced orders are,", response.body)
-    //     const theSupplierOrder = response.body;
-    //   //   if (theOder.order.id === order.order.id) {
-    //   //     console.log("the supplier order is", theOder)
-
-
-    //       // this.receivers.push(theOder);
-    //       // SupplierInvoicedOrderData.addSupplierInvoicedOrder(theOder)
-    //       // SupplierInvoicedOrderData.addSupplierInvoicedOrderToMap(theOder, theOder.id)
-
-    //     })
-      // });
-
-    // })
     });
     
   }

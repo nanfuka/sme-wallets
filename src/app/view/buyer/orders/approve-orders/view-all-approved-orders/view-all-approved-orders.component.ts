@@ -15,7 +15,7 @@ import { GenerateBUyerApproveOrderPDF } from './generateBuyerApproveOrderPDF';
 @Component({
   selector: "app-view-all-approved-orders",
   templateUrl: "./view-all-approved-orders.component.html",
-  styleUrls: ["../../view-orders/view-orders.component.css"]
+  styleUrls: ["./view-all-approved-orders.component.css"]
 })
 export class ViewAllApprovedOrdersComponent implements OnInit {
   approveStatus = false
@@ -30,6 +30,7 @@ export class ViewAllApprovedOrdersComponent implements OnInit {
   orderId: string;
   placeOfDelivery: string;
   termsOfPayment: string;
+  deliveryTime: string;
   termsOfDelivery: string;
 
   srNo: string;
@@ -40,6 +41,7 @@ export class ViewAllApprovedOrdersComponent implements OnInit {
   price: number;
   totalBeforeTax: number;
   deliveryTerms: string;
+  
 
   subTotal: number;
   tax: number;
@@ -71,10 +73,12 @@ export class ViewAllApprovedOrdersComponent implements OnInit {
     const order = ApproveOrderData.getApproveOrderMap().get(ApproveOrderData.getIdOfOrderToView());
 
     if (order !== undefined && order != null) {
+      console.log("the order i want ot manupulate is", order)
 
       this.buyerName = order.order.buyer.name;
       this.buyerPhone = order.order.buyer.phoneNumber;
       this.buyerEmail = order.order.buyer.email;
+      this.termsOfPayment = order.order.paymentTerms;
 
       this.supplierName = order.order.supplier.name;
       this.supplierPhone = order.order.supplier.phoneNumber;
@@ -91,6 +95,9 @@ export class ViewAllApprovedOrdersComponent implements OnInit {
       this.salesUnit = order.order.saleUnit;
       this.price = order.pricePerItem;
       this.totalBeforeTax = order.totalPrice;
+      this.deliveryTime = order.order.deliveryTime;
+      this.termsOfDelivery = order.order.deliveryTerms;
+      
 
       this.subTotal = order.subTotal;
       this.tax = order.taxRate;
@@ -166,18 +173,38 @@ export class ViewAllApprovedOrdersComponent implements OnInit {
 
     this.httpService.putRequest("/orders/update", OldOrderorder).subscribe(e => {
       console.log(`the updated Order is ${JSON.stringify(e.body)}`)
+      setTimeout(() => {
+        this.updateOrderWebSocketback()
+        }, 2000);
     });
     this.approveStatus = true;
-    setTimeout(() => {
-      // this.router.navigate(['/buyer/orders']);
-    }, 2000);
+    // setTimeout(() => {
+    //   // this.router.navigate(['/buyer/orders']);
+    // }, 2000);
   }
+
+  updateOrderWebSocketback(){
+    this.httpService.getRequest("/orders/findAll").subscribe(e => {
+        console.log("the order websocket has been updated")
+
+        setTimeout(() => {
+          this.updateSupplierOrderWebSocketback()
+          }, 1000);
+  })
+}
+
+updateSupplierOrderWebSocketback(){
+  this.httpService.getRequest("/supplierOrders/findAll").subscribe(e => {
+    console.log("the Supplier order websocket has been updated")
+})
+}
+ 
 
   generatePdf() {
     const id = ApproveOrderData.getIdOfOrderToView();
     const orderToViewPdf = ApproveOrderData.getApproveOrderMap().get(id);
 
-    console.log(orderToViewPdf);
+    console.log("teh order iiiii wanna view", orderToViewPdf);
 
     GenerateBUyerApproveOrderPDF.generatePdf(orderToViewPdf);
   }

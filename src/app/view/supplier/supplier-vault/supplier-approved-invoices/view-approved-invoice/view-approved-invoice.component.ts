@@ -68,24 +68,27 @@ export class ViewApprovedInvoiceComponent implements OnInit {
   }
 
   private populateOrderView(): void {
-const order = SupplierApprovedOrdersData.getsupplierApprovedOrdersMap().get(SupplierApprovedOrdersData.getIdOfOrderToView());
-
-this.httpService.getRequest('/supplierOrders/findAll').subscribe(response => {
-
-  this.objectUtil.dataObjectToArray(response.body).map(theOder => {
-    if (theOder.order.id === order.order.id) {
-      console.log("the suuuups order is", theOder)
-      this.price = theOder.pricePerItem;
-      this.shipping = theOder.shippingCharges;
-      this.subTotal = theOder.subTotal;
-      this.tax = theOder.taxRate;
-      this.totalAfterTax = theOder.finalTotal;
+    const order = SupplierApprovedOrdersData.getApproveOrderMap().get(SupplierApprovedOrdersData.getIdOfOrderToView());
+    if (order.invoiceStatus == "approved") {
+      console.log("the order is aproved therefore the get  paid button should be there")
     }
-  });
-})
+
+    this.httpService.getRequest('/supplierOrders/findAll').subscribe(response => {
+
+      this.objectUtil.dataObjectToArray(response.body).map(theOder => {
+        if (theOder.order.id === order.order.id) {
+          console.log("the suuuups order is", theOder)
+          this.price = theOder.pricePerItem;
+          this.shipping = theOder.shippingCharges;
+          this.subTotal = theOder.subTotal;
+          this.tax = theOder.taxRate;
+          this.totalAfterTax = theOder.finalTotal;
+        }
+      });
+    })
 
 
-if (order !== undefined && order != null) {
+    if (order !== undefined && order != null) {
 
       this.buyerName = order.order.buyer.name;
       this.buyerPhone = order.order.buyer.phoneNumber;
@@ -113,15 +116,6 @@ if (order !== undefined && order != null) {
     }
 
   }
-
-  // generatePdf() {
-  //   const id = SupplierApprovedOrdersData.getIdOfOrderToView();
-  //   const orderToViewPdf = SupplierApprovedOrdersData.getsupplierApprovedOrdersMap().get(id);
-
-  //   console.log(orderToViewPdf);
-
-  //   GenerateApprovedInvoicesPDF.generatePdf(orderToViewPdf);
-  // }
 
   temporaryWallet(buyer: User): Wallet {
     let wallet = new Wallet(1, "SME", "Feb 21, 2020 5:13:45 AM", buyer);
@@ -162,7 +156,7 @@ if (order !== undefined && order != null) {
   }
 
   Order() {
-    const supplierOrders = SupplierApprovedOrdersData.getsupplierApprovedOrdersMap().get(
+    const supplierOrders = SupplierApprovedOrdersData.getApproveOrderMap().get(
       SupplierApprovedOrdersData.getIdOfOrderToView())
     const neededOrder = supplierOrders.order;
     console.log("the neeeeded order is", neededOrder)
@@ -196,7 +190,7 @@ if (order !== undefined && order != null) {
   raiseInvoice(form: NgForm) {
 
 
-    const supplierOrders = SupplierApprovedOrdersData.getsupplierApprovedOrdersMap().get(
+    const supplierOrders = SupplierApprovedOrdersData.getApproveOrderMap().get(
       SupplierApprovedOrdersData.getIdOfOrderToView())
     const neededOrder = supplierOrders.order;
 
@@ -280,7 +274,7 @@ if (order !== undefined && order != null) {
       console.log(`the updated Order is ${e.body, null, 2}`)
       this.invoiceStatus = true;
     });
-    
+
 
   }
 
@@ -288,53 +282,30 @@ if (order !== undefined && order != null) {
 
     this.populateOrderView();
     this.dateCtrl = new FormControl("", [Validators.required]);
-
-
   }
 
   generatePdf() {
-    const id = SupplierApprovedOrdersData.getIdOfOrderToView();
-    const orderToViewPdf = SupplierApprovedOrdersData.getsupplierApprovedOrdersMap().get(id);
+    const invoices = SupplierApprovedOrdersData.getApproveOrderMap().get(SupplierApprovedOrdersData.getIdOfOrderToView())
 
+    const id = SupplierApprovedOrdersData.getIdOfOrderToView();
+    const orderToViewPdf = SupplierApprovedOrdersData.getApproveOrderMap().get(id);
+    console.log("the data i want to view", orderToViewPdf)
     console.log(orderToViewPdf);
 
-    GenerateApprovedInvoicesPDF.generatePdf(orderToViewPdf);
+    this.httpService.getRequest('/supplierOrders/findAll').subscribe(response => {
+
+      this.objectUtil.dataObjectToArray(response.body).map(theOder => {
+        if (theOder.order.id === invoices.order.id) {
+          this.data = theOder
+          this.data.id = invoices.id
+
+          console.log("the generated supplierOrder of the invoice is", theOder)
+          
+        }
+      });
+    })
+
+    GenerateApprovedInvoicesPDF.generatePdf(this.data);
   }
-  // generatePdf() {
-  //   // const order = AllOrderData.getAllOrderMap().get(AllOrderData.getIdOfOrderToView());
-
-  //   const orders = SupplierApprovedOrdersData.getsupplierApprovedOrdersMap().get(SupplierApprovedOrdersData.getIdOfOrderToView())
-  //   // const idss = SupplierApprovedOrdersData.getIdOfOrderToView();
-  
-  //   if(orders.order.orderStatus != "pending"){
-  //     this.httpService.getRequest('/supplierOrders/findAll').subscribe(response => {
-
-  //       this.objectUtil.dataObjectToArray(response.body).map(theOder => {
-  //         if (theOder.order.id === orders.order.id) {
-  //           this.data = theOder
-  //           GenerateApprovedInvoicesPDF.generatePdf(this.data)
-            
-  //         }
-  //       });
-  //     })
-  //   }
-
-  //   else{
-  //     // const order = AllOrderData.getAllOrderMap().get(AllOrderData.getIdOfOrderToView());
-  //   // this.data = order;
-  //       // const id = AllOrderData.getIdOfOrderToView();
-  //       this.httpService.getRequest('/orders/findAll').subscribe(response => {
-
-  //         this.objectUtil.dataObjectToArray(response.body).map(theOder => {
-  //           if (theOder.id === orders.order.id) {
-  //             this.data = theOder
-              
-  //           }
-  //         });
-  //       })
-  //       GenerateBuyerAllOrderPDF.generatePdf(this.data);
-  //   }
-
-  // }
 
 }

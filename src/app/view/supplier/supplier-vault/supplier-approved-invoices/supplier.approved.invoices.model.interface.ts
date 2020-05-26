@@ -1,4 +1,5 @@
 import { SupplierOrder } from 'src/app/model/supplier/order/SupplierOrder';
+import { Invoice } from 'src/app/model/buyer/invoices/invoice-model';
 
 // import { Order } from 'src/app/model/buyer/order/order-model';
 // import { SupplierOrder } from 'src/app/model/supplier/order/SupplierOrder';
@@ -6,38 +7,50 @@ import { SupplierOrder } from 'src/app/model/supplier/order/SupplierOrder';
 // import { Invoice } from 'src/app/model/buyer/invoices/invoice-model';
 
 export interface ISupplierApprovedOrders {
-    orderNo: string;
-    orderDate: any;
-    orderDueDate: any;
+    invoiceNo: string;
+    invoiceDate: any;
+    invoiceDueDate: any;
     senderName: string;
-    orderStatus: string;
+    invoiceTotal:any;
+    invoiceStatus: string;
     action: any;
   }
 
 
 export class PopulateSupplierApprovedOrderTable {
+  
 
   public static displayedColumns: string[] = [
-        "orderNo",
-        "orderDate",
-        "orderDueDate",
+        "invoiceNo",
+        "invoiceDate",
+        "invoiceDueDate",
         "senderName",
-        "orderStatus",
+        "invoiceTotal",
+        "invoiceStatus",
         "action"
       ];
 
 
-  public  static populateTableOnInit(fromResponse: SupplierOrder[]) {
+  public  static populateTableOnInit(fromResponse: Invoice[]) {
+    var buttonString;
 
     return fromResponse.map(e => {
-      console.log(`the naaame ${JSON.stringify(e.order.buyer.name, null, 2)}`)
+      if(e.invoiceStatus == "approved"){
+        buttonString = "Discount Amount"
+      }
+      else{
+        buttonString = "Discounted"
+      }
       return  {
-        orderNo: `inv-${e.order.id}`,
-        orderDate: e.order.timestamp,
-        orderDueDate: e.order.orderDueDate,
+        orderNo: `inv-${e.id}`,
+        orderDate: e.theTimestamp,
+        orderDueDate: e.invoiceDueDate,
+        
         senderName: e.order.buyer.name,
-        orderStatus: e.order.orderStatus,
-        action: e.id
+        invoiceTotal: "unknown",
+        invoiceStatus: e.invoiceStatus,
+        action: e.id,
+        buttonString: buttonString
       };
 
     });

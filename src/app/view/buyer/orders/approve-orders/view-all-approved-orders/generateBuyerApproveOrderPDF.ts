@@ -19,7 +19,7 @@ export class GenerateBUyerApproveOrderPDF {
               text: ``
             },
             {
-              text: `ORDER NO - ${order.id}\n ORDER DUE DATE :${order.order.orderDueDate} \n\n\n`,
+              text: `ORDER NO - ${order.order.id}\n ORDER DUE DATE :${order.order.orderDueDate} \n\n\n`,
               alignment: `right`,
               margin: [0, 30, 0, 0],
               fontSize: 12
@@ -63,7 +63,7 @@ export class GenerateBUyerApproveOrderPDF {
                 { text: `${order.order.deliveryTerms}`, style: `tableContent` },
                 { text: `${order.order.conveyanceMethod}`, style: `tableContent` },
                 { text: `${order.order.placeOfDelivery}`, style: `tableContent` },
-                { text: `${order.order.deliveryTerms}`, style: `tableContent` },
+                { text: `${order.order.deliveryTime}`, style: `tableContent` },
                 { text: `${order.order.paymentTerms}`, style: `tableContent` }
               ]
             ]
@@ -153,7 +153,7 @@ export class GenerateBUyerApproveOrderPDF {
                     },
 
                     {
-                      text: `${order.totalPrice}`,
+                      text: `${order.finalTotal}`,
                       style: `tableContent`
                     } // to be popoulated from db
                   ]

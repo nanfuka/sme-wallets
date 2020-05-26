@@ -5,6 +5,7 @@ import { SupplierOrder } from 'src/app/model/supplier/order/SupplierOrder';
 import { ObjectsUtil } from 'src/app/utils/objects/objects';
 import { HttpService } from 'src/app/utils/http/http-service';
 import { GenerateBuyerApprovedInvoicePDF } from './generateBuyerInvoicedOrderPDF';
+import { BuyerApprovedInvoicePDF } from './generatePdf';
 
 @Component({
   selector: 'app-vews-approved-invoices',
@@ -12,7 +13,7 @@ import { GenerateBuyerApprovedInvoicePDF } from './generateBuyerInvoicedOrderPDF
   styleUrls: ['./vews-approved-invoices.component.css']
 })
 export class VewsApprovedInvoicesComponent implements OnInit {
-
+public data;
 
   buyerName: string;
   buyerPhone: string;
@@ -41,6 +42,7 @@ export class VewsApprovedInvoicesComponent implements OnInit {
   tax: number;
   shipping: number;
   totalAfterTax: number;
+  invoiceDueDate: string;
 
 
   constructor(
@@ -67,18 +69,20 @@ export class VewsApprovedInvoicesComponent implements OnInit {
           this.subTotal = theOder.subTotal;
           this.tax = theOder.taxRate;
           this.totalAfterTax = theOder.finalTotal;
+          this.totalBeforeTax = theOder.subTotal;
         }
       });
     })
 
 
 
-    if ( order !== undefined && order != null ) {
+    if ( order != undefined && order != null ) {
       this.date = order.order.timestamp;
       this.orderNumber = order.order.id;
       this.buyerName = order.order.buyer.name;
       this.buyerPhone = order.order.buyer.phoneNumber;
       this.buyerEmail = order.order.buyer.email;
+      this.invoiceDueDate = order.invoiceDueDate;
 
       this.supplierName = order.order.supplier.name;
       this.supplierPhone = order.order.supplier.phoneNumber;
@@ -121,14 +125,40 @@ export class VewsApprovedInvoicesComponent implements OnInit {
 
   }
 
+  // generatePdf() {
+  //   const id = BuyerApprovedInvoiceData.getIdOfOrderToView();
+  //   const orderToViewPdf = BuyerApprovedInvoiceData.getbuyerApprovedInvoiceMap().get(id);
+
+  //   console.log("the order to view in pdf is ,",orderToViewPdf);
+
+  //   GenerateBuyerApprovedInvoicePDF.generatePdf(orderToViewPdf);
+  // }
+
   generatePdf() {
-    const id = BuyerApprovedInvoiceData.getIdOfOrderToView();
-    const orderToViewPdf = BuyerApprovedInvoiceData.getbuyerApprovedInvoiceMap().get(id);
+    const invoices = BuyerApprovedInvoiceData.getbuyerApprovedInvoiceMap().get(BuyerApprovedInvoiceData.getIdOfOrderToView())
+    console.log("the selected invoice id", invoices)
+    
+      var iif;
+      this.httpService.getRequest('/supplierOrders/findAll').subscribe(response => {
 
-    console.log("the order to view in pdf is ,",orderToViewPdf);
+        this.objectUtil.dataObjectToArray(response.body).map(theOder => {
+          if (theOder.order.id === invoices.order.id) {
+            this.data = theOder
+            this.data["ids"] = invoices.id
+            this.totalBeforeTax = theOder.subTotal
+            // InvoicePDF.generatePdf(this.data);
 
-    GenerateBuyerApprovedInvoicePDF.generatePdf(orderToViewPdf);
-  }
+            console.log("the generated supplierOrder of the invoice is", this.data)
+            
+          }
+        });
+      })
+      BuyerApprovedInvoicePDF.generatePdf(this.data);
+
+
+    }
+
+ 
 
 }
 

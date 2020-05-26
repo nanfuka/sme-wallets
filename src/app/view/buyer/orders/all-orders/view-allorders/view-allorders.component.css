@@ -1,4 +1,4 @@
-.container {
+   .container {
     margin: auto;
     padding-top: 70px;
   }
@@ -7,10 +7,12 @@
     height: 50px;
     width: 50px;
   }
-
-  mat-form-field{
-    width: 50%;
-    font-size: 13px;
+  .statusmessage{
+    margin-bottom: 2%;
+    margin-top: 2%;
+    text-align: center;
+    font-weight: 500;
+   
   }
   
   li {
@@ -49,13 +51,17 @@
   
   .btns {
     float: right;
+    margin-bottom: 2%;
   }
   
   .btn {
     height: 45px;
-    width: 120px;
-    /* font-size: 20px; */
+    width: 120%;
+    font-size: 20px;
+  }
+  button{
     margin-bottom: 10%;
+  
   }
   
   #btn1 {

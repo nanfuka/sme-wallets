@@ -1,16 +1,11 @@
 import { Component, OnInit } from "@angular/core";
 import { FormControl, Validators, NgForm } from "@angular/forms";
-import { SupplierService } from "../../../../service/supplier/supplier.service";
-import { OrdersComponent } from "../orders/orders.component";
 import { List } from "src/app/utils/collections/list";
 import { User } from "src/app/shared/model/user/user-model";
-import { HtpsService } from "src/app/htps.service";
 import { HttpService } from "src/app/utils/http/http-service";
 import { ObjectsUtil } from "src/app/utils/objects/objects";
 import { Order } from "src/app/model/buyer/order/order-model";
 import { DateUtils } from "src/app/utils/date/date-utils";
-import { UserTransient } from "src/app/shared/model/user/user-model-transient";
-import { Mapp } from "../../../../utils/collections/map";
 import { SupplierData } from "../../../../service/supplier/supplier.data";
 import { Wallet } from "../../../../shared/model/wallet/wallet-model";
 import { WebsocketService } from "src/app/utils/websocket/websocket.service";
@@ -33,12 +28,11 @@ export class CreateOrderComponent implements OnInit {
     private objectUtil: ObjectsUtil<User>,
     private objectUtilOrder: ObjectsUtil<Order>,
     private websocket: WebsocketService,
-    // private location: Location,
-    
+
   ) {
 
-}
-  
+  }
+
 
   public supplierNames: List<User>;
   successPost: string;
@@ -53,35 +47,41 @@ export class CreateOrderComponent implements OnInit {
 
 
   ngOnInit() {
-    console.log("the buyer is ",localStorage.getItem('loggedinUser'))
+
+    console.log("the buyer is ", localStorage.getItem('loggedinUser'))
 
     this.httpService.getRequest("/users/findAll").subscribe(e => {
       this.objectUtil.dataObjectToArray(e.body).map(aSupplier => {
         if (aSupplier.userType === "supplier") {
           this.receivers.push(aSupplier);
 
+
           SupplierData.addASupplier(aSupplier);
+          console.log("all suppliers here", SupplierData.getAllSuppliers())
+
 
           SupplierData.addASupplierToMap(aSupplier, aSupplier.id);
+
         }
       });
     });
 
+
     this.dateCtrl = new FormControl("", [Validators.required]);
   } // end ngOninit()
 
-  temporaryBuyer(): User {
+  buyer(): User {
+    var loggedIn = JSON.parse(localStorage.getItem('loggedinUser'))
     const user = new User(
-      2,
-      "cobs399@gmail.com",
-      "Feb 13, 2020 6:00:59 AM",
-      "rec",
-      "+25624534534",
-      123,
-      "jacob okia ",
-      "buyer"
+      loggedIn[0].id,
+      loggedIn[0].email,
+      loggedIn[0].emailVerifiedAt,
+      loggedIn[0].password,
+      loggedIn[0].phoneNumber,
+      loggedIn[0].refUserId,
+      loggedIn[0].name,
+      loggedIn[0].userType
     );
-    // console.log("the buyer is ",localStorage.getItem('loggedinUser'))
 
 
     const emailVerifiedAtStr = "emailVerifiedAtStr";
@@ -102,7 +102,7 @@ export class CreateOrderComponent implements OnInit {
       1,
       "SME",
       "Feb 21, 2020 5:13:45 AM",
-      this.temporaryBuyer()
+      this.buyer()
     );
 
     wallet.timestamp = null;
@@ -120,8 +120,45 @@ export class CreateOrderComponent implements OnInit {
     return wallet;
   }
 
-  onSubmit(form: NgForm) {
+
+
+  onSubmit(form: NgForm, callback) {
     const idOfSupplier = form.value.receivername;
+    var timePeriod = form.value.timePeriod
+    var deliveryTime = form.value.newDate
+
+    var deliveryTime = form.value.newDate
+    var days = parseInt(timePeriod)
+    console.log(days)
+
+    var delTime = deliveryTime.replace(":", ",");
+
+    var stri = delTime.substring(0, delTime.length - 6);
+    var hour = parseInt(stri)
+
+    // if(hour>12){
+    //   hour = hour+12
+    // }
+    var hours = hour
+
+    console.log(hours)
+    var mins = deliveryTime.substring(2, deliveryTime.length - 3);
+    var minutes = parseInt(mins)
+
+
+    var orderDue = new Date()
+
+    orderDue.setDate(orderDue.getDate() + days)
+    orderDue.setHours(hours)
+    orderDue.setMinutes(minutes)
+    var orderDuef = orderDue.toString()
+
+    var orderdues = orderDuef.substring(3, orderDuef.length - 28);
+
+    console.log(orderdues)
+
+    // var orderDueDay =
+    //   console.log("the order due date is ", form.value.date)
 
     const supplierInfo = SupplierData.getMapOfIdToSupplier().get(
       Number(idOfSupplier)
@@ -154,30 +191,49 @@ export class CreateOrderComponent implements OnInit {
 
     order.wallet = this.temporaryWallet();
     order.supplier = userSupplier;
-    order.buyer = this.temporaryBuyer();
+    order.buyer = this.buyer();
     order.orderStatus = "pending";
+    order.orderDueDate = orderdues;
 
     const newOrder = this.objectUtilOrder.objectToInstance(order, object);
 
     console.log(`the order: ${JSON.stringify(newOrder, null, 2)} `);
 
     this.httpService.postRequest("/orders/create", order).subscribe(e => {
+
+
       console.log(`the result ${JSON.stringify(e, null, 2)} `);
       this.OrderStatus = true;
       setTimeout(() => {
-      //  this.cancel() 
-      }, 2000);
-    });
+        this.callback()
+      }, 1000);
+    })
+
+
+
+
   } // end onSubmit()
 
+  callback() {
+    this.httpService.getRequest("/orders/findAll").subscribe(e => {
+      console.log("Found all Orders")
+    })
+  }
+
+  someMethod(value) {
+    console.log(value)
+  }
+
+  timePeriod(form: NgForm) {
+    console.log(form.value)
+  }
+
+
+
   showNotification(result: any) {
-    console.log("result show to the suplier", result);
-    if(result){
+    if (result) {
       this.OrderStatus = true
     }
   }
 
-  onOptionsSelected() {
-    console.log(`hhhhhhh`);
-  }
 }

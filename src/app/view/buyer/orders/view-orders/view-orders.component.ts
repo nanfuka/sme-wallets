@@ -4,7 +4,6 @@ import pdfFonts from "pdfmake/build/vfs_fonts";
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
 import { PendingOrderData } from "../../../../service/order/pending.order.data";
 import { Location } from "@angular/common";
-import { GeneratePurchaseOrderPDF } from "./generatePurchaseOrderPDF";
 
 @Component({
   selector: "app-view-orders",
@@ -12,8 +11,10 @@ import { GeneratePurchaseOrderPDF } from "./generatePurchaseOrderPDF";
   styleUrls: ["./view-orders.component.css"]
 })
 export class ViewOrdersComponent implements OnInit {
-  date: string;
-  orderNo: number;
+  ngOnInit() {
+    this.populateOrderView();
+  }
+
   buyerName: string;
   buyerPhone: string;
   buyerEmail: string;
@@ -43,11 +44,6 @@ export class ViewOrdersComponent implements OnInit {
   constructor(private location: Location) {
     this.populateOrderView();
   }
-
-  ngOnInit() {
-    this.populateOrderView();
-  }
-
   cancel() {
     this.location.back();
   }
@@ -58,8 +54,6 @@ export class ViewOrdersComponent implements OnInit {
     );
 
     if (order !== undefined && order != null) {
-      this.date = order.timestamp;
-      this.orderNo = order.id;
       this.buyerName = order.buyer.name;
       this.buyerPhone = order.buyer.phoneNumber;
       this.buyerEmail = order.buyer.email;
@@ -73,7 +67,7 @@ export class ViewOrdersComponent implements OnInit {
       this.termsOfPayment = order.paymentTerms;
       this.termsOfDelivery = order.deliveryTerms;
 
-      this.srNo = order.isbnNumber;
+      this.srNo = `ord-${order.id}`;
       this.itemName = order.itemName;
       this.itemDescription = order.itemDescription;
       this.salesUnit = order.saleUnit;
@@ -92,11 +86,199 @@ export class ViewOrdersComponent implements OnInit {
   }
 
   generatePdf() {
-    const id = PendingOrderData.getIdOfOrderToView();
-    const orderToViewPdf = PendingOrderData.getAllPendingOrderMap().get(id);
+    const documentDefinition = {
+      content: [
+        {
+          text: "PURCHASE ORDER",
+          style: "header"
+        },
+        {
+          alignment: "justify",
+          columns: [
+            {
+              text: ""
+            },
+            {
+              text: "ORDER NO - \n ORDER DUE DATE : \n\n\n",
+              alignment: "right",
+              margin: [0, 30, 0, 0],
+              fontSize: 12
+            }
+          ]
+        },
+        {
+          columns: [
+            {
+              text: "From :\n Name :\n Address : \n Phone :",
+              style: "subheader"
+            },
+            {
+              text:
+                "To :\n Recipient Name :\n Company Name :\n Address :\n Phone : \n",
+              style: "subheader"
+            },
+            {
+              text:
+                "Order Details : \n Order Id : \n Delivery Place : \n Payment Terms \n Delivery Terms : ",
+              style: "subheader"
+            }
+          ]
+        },
+        {
+          style: "table1",
+          table: {
+            headerRows: 1,
+            widths: ["*", 130, "*", "*", "*", "*"],
+            heights: [40, 25],
+            body: [
+              [
+                { text: "DEPARTMENT", style: "tableHeader" },
+                { text: "TERMS OF DELIVERY", style: "tableHeader" },
+                { text: "METHOD OF CONVEYANCE", style: "tableHeader" },
+                { text: "PLACE OF DELIVERY", style: "tableHeader" },
+                { text: "TIME OF DELIVERY", style: "tableHeader" },
+                { text: "TERMS OF PAYMENT", style: "tableHeader" }
+              ]
+            ]
+          }
+        },
+        {
+          style: "table2",
+          table: {
+            heights: [40, 25],
+            widths: ["*", 130, "*", "*", "*", "*"],
+            body: [
+              [
+                { text: "REF/ISBN CAT NO.", style: "tableHeader" },
+                { text: "DESCRIPTION", style: "tableHeader" },
+                { text: "UNIT OF SALE(PCS/LTR)", style: "tableHeader" },
+                { text: "QUANTITY", style: "tableHeader" },
+                { text: "UNIT PRICE", style: "tableHeader" },
+                { text: "TOTAL PRICE", style: "tableHeader" }
+              ],
+              [
+                { text: "One value goes here", style: "tableContent" },
+                { text: "Another one here", style: "tableContent" },
+                { text: "OK?", style: "tableContent" },
+                { text: "Information goes here", style: "tableContent" },
+                { text: "Information goes here", style: "tableContent" },
+                { text: "Information goes here", style: "tableContent" }
+              ]
+            ]
+          }
+        },
+        {
+          alignment: "justify",
+          columns: [
+            {
+              text: ""
+            },
+            // Table 3
+            {
+              style: "table3",
+              table: {
+                widths: [100, 100],
+                heights: [30, 30, 30, 30],
+                body: [
+                  [
+                    {
+                      text: "SUBTOTAL",
+                      style: "tableHeader",
+                      border: [false, false, false, false],
+                      alignment: "right"
+                    },
+                    {
+                      text: "1,000",
+                      style: "tableContent"
+                    } // to be popoulated from db
+                  ],
+                  [
+                    {
+                      text: "TAX",
+                      style: "tableHeader",
+                      border: [false, false, false, false],
+                      alignment: "right"
+                    },
+                    {
+                      text: "1,000",
+                      style: "tableContent"
+                    } // to be popoulated from db
+                  ],
+                  [
+                    {
+                      text: "SHIPPING",
+                      style: "tableHeader",
+                      border: [false, false, false, false],
+                      alignment: "right"
+                    },
+                    {
+                      text: "1,000",
+                      style: "tableContent"
+                    } // to be popoulated from db
+                  ],
+                  [
+                    {
+                      text: "TOTAL PRICE",
+                      style: "tableHeader",
+                      border: [false, false, false, false],
+                      alignment: "right"
+                    },
 
-    console.log(orderToViewPdf);
-
-    GeneratePurchaseOrderPDF.generatePdf(orderToViewPdf);
+                    {
+                      text: "1,000",
+                      style: "tableContent"
+                    } // to be popoulated from db
+                  ]
+                ]
+              }
+            }
+          ]
+        },
+        //Footer Note
+        {
+          columns: [
+            {
+              text:
+                "Make all deliveries as per Terms of Delivery.\n If you have any questions concerning this Purchase Order, contact . . . ",
+              margin: [0, 30, 0, 0]
+            }
+          ]
+        },
+        {
+          columns: [
+            {
+              text: " REQUISITIONER",
+              alignment: "center",
+              margin: [0, 20, 0, 0]
+            }
+          ]
+        }
+      ],
+      // Styles for the Pdf Document Begins Here
+      styles: {
+        header: {
+          fontSize: 20,
+          alignment: "center",
+          bold: true,
+          margin: [0, 15, 0, 0]
+        },
+        subheader: { bold: true, fontSize: 10, margin: [0, 25, 0, 0] },
+        tableHeader: {
+          bold: true,
+          fontSize: 10,
+          margin: [0, 14, 0, 0]
+          // fillColor: "#dddddd"
+        },
+        tableContent: { margin: [0, 14, 0, 0] },
+        table1: { margin: [0, 30, 0, 15], fontSize: 9 },
+        table2: { margin: [0, 30, 0, 15], fontSize: 9 },
+        table3: { margin: [10, 30, 0, 0], fontSize: 9 }
+      },
+      defaultStyle: {
+        columnGap: 50
+      }
+    };
+    pdfMake.createPdf(documentDefinition).open();
   }
+
 }

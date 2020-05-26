@@ -5,7 +5,7 @@ import { PaymentnoticeComponent } from "./view/buyer/paymentnotice/paymentnotice
 import { AllOrdersComponent } from "./view/buyer/orders/all-orders/all-orders.component";
 import { InvoicesComponent } from "./view/buyer/invoices/invoices.component";
 import { OrdersComponent } from "./view/buyer/orders/orders/orders.component";
-import { InviteContactsComponent } from "./view/buyer/invite-contacts/invite-contacts.component";
+import { InviteContactsComponent } from "./view/buyer/invites/invite-contacts/invite-contacts.component";
 import { VaultComponent } from "./view/buyer/vault/vault.component";
 import { PaymentInfoComponent } from "./view/buyer/payment-info/payment-info.component";
 import { SideAccountSettingsComponent } from "./view/buyer/side-account-settings/side-account-settings.component";
@@ -26,7 +26,7 @@ import { SponsordashboardComponent } from "./shared/sponsordashboard/sponsordash
 import { SponsorVaultSponsorshipComponent } from "./view/sponsor/sponsor-vault-sponsorship/sponsor-vault-sponsorship.component";
 import { SponsorInvoicesComponent } from "./view/sponsor/sponsor-invoices/sponsor-invoices.component";
 import { SponsorSettingsComponent } from "./view/sponsor/sponsor-settings/sponsor-settings.component";
-import { ViewOrdersComponent } from "./view/buyer/orders/view-orders/view-orders.component";
+import { ViewOrdersComponent } from "./view/buyer/orders/pending-orders/view-orders/view-orders.component";
 import { SupplierViewOrdersComponent } from "./view/supplier/supplier-purchase-orders/supplier-pending-orders/supplier-view-orders/supplier-view-orders.component";
 import { ViewInvoicesComponent } from "./view/buyer/invoices/view-invoices/view-invoices.component";
 import { ViewAllordersComponent } from './view/buyer/orders/all-orders/view-allorders/view-allorders.component';
@@ -41,6 +41,11 @@ import { ViewApprovedInvoiceComponent } from './view/supplier/supplier-vault/sup
 import { ViewApproveInvoicesComponent } from './view/buyer/invoices/aprove-invoice/view-approve-invoices/view-approve-invoices.component';
 import { ApprovedInvoicesComponent } from './view/buyer/vault/approved-invoices/approved-invoices.component';
 import { VewsApprovedInvoicesComponent } from './view/buyer/vault/approved-invoices/vews-approved-invoices/vews-approved-invoices.component';
+import { GetPaidComponent } from './view/supplier/supplier-vault/supplier-approved-invoices/get-paid/get-paid.component';
+import { ViewSponsorInvoicesComponent } from './view/sponsor/sponsor-invoices/view-sponsor-invoices/view-sponsor-invoices.component';
+import { WalletsComponent } from './view/wallets/wallets.component';
+import { CreateWalletsComponent } from './view/wallets/create-wallets/create-wallets.component';
+import { ViewWalletsComponent } from './view/wallets/view-wallets/view-wallets.component';
 
 
 const routes: Routes = [
@@ -112,11 +117,26 @@ const routes: Routes = [
     path: "supplier/orders",
     component: SupplierPurchaseOrdersComponent
   },
-  // {
+  {
 
-  //   path: "supplier/orders",
-  //   component: OrdersComponent
-  // },
+    path: "suppliers/view-approved-invoice-component",
+    component: ViewSupplierInvoicedOrdersComponent
+  },
+
+  {
+
+    path: "sponsor/ViewSponsorInvoicesComponent",
+    component: ViewSponsorInvoicesComponent
+  },
+  {
+
+    
+
+    path: "suppliers/view-approved-invoice-component/getPaid",
+    component: GetPaidComponent
+  },
+  
+  
 
   
   {
@@ -167,7 +187,9 @@ component: ViewRaisedInvoicesComponent
     component: SponsorVaultSponsorshipComponent
   },
   { path: "home", component: HomeComponent },
-
+  { path: "home/wallets", component: WalletsComponent },
+  { path: "admin/create-wallet", component: CreateWalletsComponent },
+  { path: "admin/view-wallet", component: ViewWalletsComponent },
   { path: "sponsor/account-settings", component: SponsorSettingsComponent }
   // {path: "buyer/accountsettings/#personalInfo",
   // component: SponsorSettingsComponent

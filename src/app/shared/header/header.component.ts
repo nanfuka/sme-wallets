@@ -1,15 +1,30 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { User } from '../model/user/user-model';
 
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
-  styleUrls: ['./header.component.css']
+  styleUrls: ['./header.component.css'],
+  inputs : ['parentDatas']
 })
 export class HeaderComponent implements OnInit {
+  public parentDatas: string;
   cur;
+  exampleParent: string
+
+  exampleMethodParent($event){
+    this.exampleParent = $event
+  }
   currentUser: string;
+
   constructor() { }
+  
+
+  Logout(){
+    localStorage.removeItem("loggedinUser");
+    this.currentUser = "";
+
+  }
 
   ngOnInit() {
     let currentLoggedin = localStorage.getItem('loggedinUser')

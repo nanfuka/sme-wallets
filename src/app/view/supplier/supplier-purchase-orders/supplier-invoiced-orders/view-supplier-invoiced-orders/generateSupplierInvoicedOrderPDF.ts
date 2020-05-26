@@ -18,7 +18,7 @@ export class GenerateSupplierInvoicedOrderPDF {
               text: ``
             },
             {
-              text: `ORDER NO - ${order.id}\n ORDER DUE DATE :${order.order.orderDueDate} \n\n\n`,
+              text: `ORDER NO - ${order.order.id}\n ORDER DUE DATE :${order.order.orderDueDate} \n\n\n`,
               alignment: `right`,
               margin: [0, 30, 0, 0],
               fontSize: 12
@@ -36,7 +36,7 @@ export class GenerateSupplierInvoicedOrderPDF {
               style: `subheader`
             },
             {
-              text: `Order Details  \n Order Id : ${order.id}\n Delivery Place :${order.order.placeOfDelivery}\n Payment Terms : ${order.order.paymentTerms} \n Delivery Terms : ${order.order.deliveryTerms}`,
+              text: `Order Details  \n Order Id : ${order.order.id}\n Delivery Place :${order.order.placeOfDelivery}\n Payment Terms : ${order.order.paymentTerms} \n Delivery Terms : ${order.order.deliveryTerms}`,
               style: `subheader`
             }
           ]
@@ -152,7 +152,7 @@ export class GenerateSupplierInvoicedOrderPDF {
                     },
 
                     {
-                      text: `${order.totalPrice}`,
+                      text: `${order.finalTotal}`,
                       style: `tableContent`
                     } // to be popoulated from db
                   ]
